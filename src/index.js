@@ -2,7 +2,7 @@ const config = require('./config');
 const helper = require('./utils/helper')
 const web3Utils = require('web3-utils')
 
-class Uniswap {
+class Quickswap {
 
     constructor() { }
 
@@ -93,4 +93,4 @@ class Uniswap {
     }
 }
 
-module.exports = Uniswap;
+module.exports = Quickswap;

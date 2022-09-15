@@ -129,9 +129,9 @@ const rawTransaction = async ({
         await checkBalance(fromContractAddress, walletAddress, fromQuantity)
         const { tx: transaction } = await transactionBuilder({
             walletAddress,
-            toContractAddress,
+            _toContractAddress: toContractAddress,
             toContractDecimal,
-            fromContractAddress,
+            _fromContractAddress: fromContractAddress,
             fromContractDecimal,
             toQuantity,
             fromQuantity,
@@ -156,9 +156,9 @@ const getExchangeRate = async ({
     try {
         const { tx: transaction, outputAmount } = await transactionBuilder({
             walletAddress: null,
-            toContractAddress,
+            _toContractAddress: toContractAddress,
             toContractDecimal,
-            fromContractAddress,
+            _fromContractAddress: fromContractAddress,
             fromContractDecimal,
             toQuantity: 0,
             fromQuantity,
@@ -188,9 +188,9 @@ const getEstimatedGas = async ({
     try {
         const { tx: transaction } = await transactionBuilder({
             walletAddress: null,
-            toContractAddress,
+            _toContractAddress: toContractAddress,
             toContractDecimal,
-            fromContractAddress,
+            _fromContractAddress: fromContractAddress,
             fromContractDecimal,
             toQuantity: 0,
             fromQuantity,
