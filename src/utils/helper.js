@@ -82,16 +82,16 @@ const transactionBuilder = async ({
 
         let data, gas = 21000000;
         if (fromEth) {
-            data = contract.interface.encodeFunctionData('swapExactETHForTokens', [amountOutMin, path, to, deadline])
-            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapExactETHForTokens(amountOutMin, path, to, deadline, { from: walletAddress }))._hex)
+            data = contract.interface.encodeFunctionData('swapExactETHForTokens', [amountOutMin, path, walletAddress, deadline])
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapExactETHForTokens(amountOutMin, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
         else if (toEth) {
-            data = contract.interface.encodeFunctionData('swapTokensForExactETH', [amountOutMin, amountInMax, path, to, deadline])
-            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactETH(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
+            data = contract.interface.encodeFunctionData('swapTokensForExactETH', [amountOutMin, amountInMax, path, walletAddress, deadline])
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactETH(amountOutMin, amountInMax, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
         else if (swapTokens) {
-            data = contract.interface.encodeFunctionData('swapTokensForExactTokens', [amountOutMin, amountInMax, path, to, deadline])
-            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactTokens(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
+            data = contract.interface.encodeFunctionData('swapTokensForExactTokens', [amountOutMin, amountInMax, path, walletAddress, deadline])
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactTokens(amountOutMin, amountInMax, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
 
         const tx = {

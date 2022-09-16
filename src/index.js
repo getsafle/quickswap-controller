@@ -19,9 +19,10 @@ class Quickswap {
         try {
             const _toContractAddress = web3Utils.toChecksumAddress(toContractAddress)
             const _fromContractAddress = web3Utils.toChecksumAddress(fromContractAddress)
+            const _walletAddress = web3Utils.toChecksumAddress(walletAddress)
             const { response } = await helper.getExchangeRate(
                 {
-                    walletAddress,
+                    walletAddress: _walletAddress,
                     toContractAddress: _toContractAddress,
                     toContractDecimal,
                     fromContractAddress: _fromContractAddress,
