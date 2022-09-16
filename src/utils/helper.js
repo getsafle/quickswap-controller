@@ -1,5 +1,6 @@
 const axios = require('axios');
-const { ChainId, Token, TokenAmount, Route, TradeType, Trade, Fetcher, WETH } = require('quickswap-sdk')
+const { ChainId, Token, TokenAmount, Route, TradeType, Trade, Fetcher, WETH, Percent } = require('quickswap-sdk')
+const JSBI = require('jsbi')
 
 const { ethers, Contract } = require('ethers')
 const { SWAP_ROUTER_ADDRESS, ETHEREUM_ADDRESS, INFURA_RPC, ERROR_MESSAGES: { NULL_ROUTE, INVARIANT_ADDRESS, QUOTE_OF_NULL, TOKEN_PAIR_DOESNOT_EXIST, INSUFFICIENT_BALANCE } } = require('./const')
@@ -34,7 +35,7 @@ const transactionBuilder = async ({
     fromContractDecimal,
     toQuantity,
     fromQuantity,
-    slippageTolerance
+    slippageTolerance = 1
 }) => {
     try {
         const web3Provider = new ethers.providers.JsonRpcProvider(INFURA_RPC);
@@ -67,37 +68,30 @@ const transactionBuilder = async ({
         const pair_from_to = await Fetcher.fetchPairData(fromToken, toToken)
         const route_from_to = new Route([pair_from_to], fromToken)
 
-        console.log(route_from_to.midPrice.toSignificant(6)) // 201.306
-        console.log(route_from_to.midPrice.invert().toSignificant(6)) // 0.00496756
-
         const trade = new Trade(route_from_to, new TokenAmount(fromToken, `${fromQuantity}`), TradeType.EXACT_INPUT)
 
-        console.log(trade)
-
-        console.log(trade.executionPrice.toSignificant(6))
-        console.log(trade.nextMidPrice.toSignificant(6))
-
-        const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
-        const amountInMax = trade.maximumAmountIn(slippageTolerance).raw // needs to be converted to e.g. hex
+        const slippage = new Percent(slippageTolerance, 100)
+        const amountOutMin = JSBI.toNumber(trade.minimumAmountOut(slippage).raw).toString()
+        const amountInMax = JSBI.toNumber(trade.maximumAmountIn(slippage).raw).toString()
         const path = [fromContractAddress, toContractAddress]
-        const to = ethers.utils.getAddress(SWAP_ROUTER_ADDRESS) // should be a checksummed recipient address
+        const to = ethers.utils.getAddress(SWAP_ROUTER_ADDRESS)
         const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
-        const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
+        const value = JSBI.toNumber(trade.inputAmount.raw)
 
         const contract = new Contract(SWAP_ROUTER_ADDRESS, SWAP_CONTRACT_ABI, web3Provider);
 
-        let data, gas;
+        let data, gas = 21000000;
         if (fromEth) {
             data = contract.interface.encodeFunctionData('swapExactETHForTokens', [amountOutMin, path, to, deadline])
-            gas = web3Utils.hexToNumber((await contract.estimateGas.swapExactETHForTokens(amountOutMin, path, to, deadline, { from: walletAddress }))._hex)
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapExactETHForTokens(amountOutMin, path, to, deadline, { from: walletAddress }))._hex)
         }
         else if (toEth) {
             data = contract.interface.encodeFunctionData('swapTokensForExactETH', [amountOutMin, amountInMax, path, to, deadline])
-            gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactETH(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactETH(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
         }
         else if (swapTokens) {
             data = contract.interface.encodeFunctionData('swapTokensForExactTokens', [amountOutMin, amountInMax, path, to, deadline])
-            gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactTokens(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
+            // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactTokens(amountOutMin, amountInMax, path, to, deadline, { from: walletAddress }))._hex)
         }
 
         const tx = {
@@ -139,7 +133,7 @@ const rawTransaction = async ({
         })
         if (!transaction)
             throw new Error(NULL_ROUTE)
-        return { transaction };
+        return { response: transaction };
     } catch (error) {
         throw error
     }
