@@ -76,7 +76,7 @@ const transactionBuilder = async ({
         const path = [fromContractAddress, toContractAddress]
         const to = ethers.utils.getAddress(SWAP_ROUTER_ADDRESS)
         const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
-        const value = JSBI.toNumber(trade.inputAmount.raw)
+        let value = JSBI.toNumber(trade.inputAmount.raw)
 
         const contract = new Contract(SWAP_ROUTER_ADDRESS, SWAP_CONTRACT_ABI, web3Provider);
 
@@ -86,10 +86,12 @@ const transactionBuilder = async ({
             // gas = web3Utils.hexToNumber((await contract.estimateGas.swapExactETHForTokens(amountOutMin, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
         else if (toEth) {
+            value = 0
             data = contract.interface.encodeFunctionData('swapTokensForExactETH', [amountOutMin, amountInMax, path, walletAddress, deadline])
             // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactETH(amountOutMin, amountInMax, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
         else if (swapTokens) {
+            value = 0
             data = contract.interface.encodeFunctionData('swapTokensForExactTokens', [amountOutMin, amountInMax, path, walletAddress, deadline])
             // gas = web3Utils.hexToNumber((await contract.estimateGas.swapTokensForExactTokens(amountOutMin, amountInMax, path, walletAddress, deadline, { from: walletAddress }))._hex)
         }
