@@ -1,18 +1,17 @@
-const config = require('./config');
 const helper = require('./utils/helper')
 const web3Utils = require('web3-utils')
+const tokenList = require('@getsafle/safle-token-lists')
 
 class Quickswap {
 
-    constructor() { }
+    constructor(chain) { 
+        this.chain = chain;
+    }
 
+  
     async getSupportedTokens() {
-        try {
-            const { response } = await helper.getRequest({ url: config.SUPPORTED_TOKENS_URL });
-            return response;
-        } catch (error) {
-            throw helper.setErrorResponse(error)
-        }
+        const tokens = await tokenList.getTokensOneInch(this.chain);
+        return tokens;
     }
 
     async getExchangeRate({ toContractAddress, toContractDecimal, fromContractAddress, fromContractDecimal, fromQuantity, slippageTolerance, walletAddress }) {
