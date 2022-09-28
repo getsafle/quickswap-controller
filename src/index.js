@@ -10,7 +10,7 @@ class Quickswap {
 
   
     async getSupportedTokens() {
-        const tokens = await tokenList.getTokensOneInch(this.chain);
+        const tokens = await tokenList.getTokensQuickswap(this.chain);
         return tokens;
     }
 
