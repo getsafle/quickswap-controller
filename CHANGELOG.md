@@ -5,3 +5,7 @@
 ### 1.0.1 (2022-09-28)
 
 - Updated method to get list of supported tokens
+
+### 1.0.2 (2022-10-28)
+
+- Updated README with all the functional documentation
