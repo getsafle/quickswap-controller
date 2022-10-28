@@ -61,7 +61,7 @@ await controller.getEstimatedGas({ toContractAddress, toContractDecimal, fromCon
 
 <br>
 
-This will give us the raw transaction to swap the tokens on 1inch.
+This will give us the raw transaction to swap the tokens on quickswap.
 
 ```js
 await controller.getRawTransaction({ walletAddress, toContractAddress, toContractDecimal, fromContractAddress, fromContractDecimal, toQuantity, fromQuantity, slippageTolerance })
