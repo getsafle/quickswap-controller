@@ -1,6 +1,6 @@
 {
   "name": "@getsafle/quickswap-controller",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Quickswap controller for safle token swaps",
   "main": "src/index.js",
   "scripts": {
